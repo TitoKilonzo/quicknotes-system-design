@@ -16,6 +16,9 @@ const MAX_TITLE_LENGTH = 100;
 // The notes currently shown on the page, newest first.
 let notes = [];
 
+// Gives every note created on this page its own identity (see deleteNote).
+let nextKey = 1;
+
 // ---------- Helpers ----------
 
 // Show a message in #status. Type is "loading", "success" or "error".
@@ -62,7 +65,13 @@ function createNoteItem(note) {
   const body = document.createElement("p");
   body.textContent = note.body || "(no text)";
 
-  item.append(title, body);
+  const deleteBtn = document.createElement("button");
+  deleteBtn.type = "button";
+  deleteBtn.className = "delete-btn";
+  deleteBtn.textContent = "Delete";
+  deleteBtn.addEventListener("click", () => deleteNote(note));
+
+  item.append(title, body, deleteBtn);
   return item;
 }
 
@@ -107,6 +116,46 @@ async function loadNotes() {
   }
 }
 
+// ---------- DELETE: remove a note ----------
+
+// JSONPlaceholder is a practice API: it ACCEPTS our requests and replies as if
+// they worked, but it never really saves or removes anything. Two things follow:
+//
+// 1. Every note we create is answered with the same id (101), so we cannot use
+//    the server's id to tell our notes apart. Each note we create therefore
+//    gets its own client-side "key", and the list is updated by key.
+// 2. A note we created locally does not exist on the server. A real API would
+//    answer 404 when asked to delete it, so a 404 for such a note is treated
+//    as "already gone" and the note is simply removed from the list.
+//
+// For every other note we send a real DELETE /posts/{id} request, and the note
+// only disappears from the page once the server says OK.
+async function deleteNote(note) {
+  setBusy(true);
+  showStatus("Deleting note...", "loading");
+
+  try {
+    await request(`${API_URL}/${note.id}`, { method: "DELETE" });
+    removeFromList(note);
+    showStatus("Note deleted.", "success");
+  } catch (error) {
+    if (error.status === 404 && note.key !== undefined) {
+      removeFromList(note);
+      showStatus("Note deleted (it only existed on this page).", "success");
+    } else {
+      showStatus("Sorry, we could not delete that note. Please try again.", "error");
+      console.error(error);
+    }
+  } finally {
+    setBusy(false);
+  }
+}
+
+function removeFromList(note) {
+  notes = notes.filter((item) => item !== note);
+  render();
+}
+
 // ---------- POST: create a note ----------
 
 // Returns an error message, or "" when the title is fine.
@@ -143,7 +192,7 @@ async function createNote(event) {
     });
 
     // Newest note goes to the top of the list.
-    notes.unshift(data);
+    notes.unshift({ ...data, key: nextKey++ });
     render();
     noteForm.reset();
     showStatus(`Note created (status ${status}, id ${data.id}).`, "success");
