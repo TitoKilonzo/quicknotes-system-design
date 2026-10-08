@@ -7,6 +7,11 @@ const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const loadBtn = document.querySelector("#load-btn");
 const statusEl = document.querySelector("#status");
 const notesList = document.querySelector("#notes-list");
+const noteForm = document.querySelector("#note-form");
+const titleInput = document.querySelector("#title-input");
+const bodyInput = document.querySelector("#body-input");
+
+const MAX_TITLE_LENGTH = 100;
 
 // The notes currently shown on the page, newest first.
 let notes = [];
@@ -102,5 +107,54 @@ async function loadNotes() {
   }
 }
 
+// ---------- POST: create a note ----------
+
+// Returns an error message, or "" when the title is fine.
+function validateTitle(title) {
+  if (title === "") {
+    return "Please give your note a title.";
+  }
+  if (title.length > MAX_TITLE_LENGTH) {
+    return `The title must be ${MAX_TITLE_LENGTH} characters or fewer (it is ${title.length}).`;
+  }
+  return "";
+}
+
+async function createNote(event) {
+  event.preventDefault();
+
+  const title = titleInput.value.trim();
+  const body = bodyInput.value.trim();
+
+  const problem = validateTitle(title);
+  if (problem) {
+    showStatus(problem, "error");
+    titleInput.focus();
+    return;
+  }
+
+  setBusy(true);
+  showStatus("Saving your note...", "loading");
+
+  try {
+    const { status, data } = await request(API_URL, {
+      method: "POST",
+      body: JSON.stringify({ title, body, userId: 1 }),
+    });
+
+    // Newest note goes to the top of the list.
+    notes.unshift(data);
+    render();
+    noteForm.reset();
+    showStatus(`Note created (status ${status}, id ${data.id}).`, "success");
+  } catch (error) {
+    showStatus("Sorry, we could not save your note. Please try again.", "error");
+    console.error(error);
+  } finally {
+    setBusy(false);
+  }
+}
+
 loadBtn.addEventListener("click", loadNotes);
+noteForm.addEventListener("submit", createNote);
 render();

@@ -15,6 +15,21 @@
 
     <main>
       <section>
+        <h2>Add a note</h2>
+        <form id="note-form">
+          <p class="field">
+            <label for="title-input">Title</label>
+            <input type="text" id="title-input" name="title" placeholder="Required, up to 100 characters" />
+          </p>
+          <p class="field">
+            <label for="body-input">Note (optional)</label>
+            <textarea id="body-input" name="body" rows="4" placeholder="Write the details here..."></textarea>
+          </p>
+          <button type="submit" id="submit-btn">Add note</button>
+        </form>
+      </section>
+
+      <section>
         <h2>Your notes</h2>
         <button type="button" id="load-btn">Load notes</button>
         <p id="status" class="status" role="status"></p>

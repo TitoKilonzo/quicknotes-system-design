@@ -76,6 +76,33 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* ---------- Form ---------- */
+.field {
+  margin: 0 0 14px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid #b8c4ca;
+  border-radius: 6px;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid #f6c945;
+  border-color: #2f4858;
+}
+
 /* ---------- Status messages ---------- */
 .status {
   min-height: 1.5em;
