@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickNotes API Client</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="api.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>QuickNotes API Client</h1>
+      <p>Talking to a real API: load, create and delete notes.</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Your notes</h2>
+        <button type="button" id="load-btn">Load notes</button>
+        <p id="status" class="status" role="status"></p>
+        <ul id="notes-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>Practice data comes from JSONPlaceholder.</p>
+    </footer>
+  </body>
+</html>
