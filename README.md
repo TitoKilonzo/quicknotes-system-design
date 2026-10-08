@@ -14,7 +14,7 @@ QuickNotes is growing from a browser-only note-taking app into an online service
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/quicknotes-system-design.git
+   git clone https://github.com/TitoKilonzo/quicknotes-system-design.git
    ```
 2. Open the `quicknotes-system-design` folder in VS Code.
 3. Right-click `index.html` and choose **Open with Live Server** (or just open `index.html` in your browser). You need an internet connection, because the notes come from `https://jsonplaceholder.typicode.com/posts`.
